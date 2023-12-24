@@ -1,0 +1,41 @@
+1.supply arbitray host like anything that is invalid
+
+2.send duplicate host header like:
+GET /example HTTP/1.1
+Host: vulnerable-website.com
+Host: bad-stuff-here
+
+3. supply absolute URL:
+GET https://vulnerable-website.com/ HTTP/1.1
+Host: bad-stuff-here
+
+4. add a line wrapping:
+GET /example HTTP/1.1
+    Host: bad-stuff-here               -----> line wrapping (indentation)
+Host: vulnerable-website.com
+
+5. inject host override headers:
+GET /example HTTP/1.1
+Host: vulnerable-website.com
+X-Forwarded-Host: bad-stuff-here
+  +++useful headers :
+
+    X-Host
+    X-Forwarded-Server
+    X-HTTP-Host-Override
+    Forwarded
+
+6.check for flawed validation:
+You should try to understand how the website parses the Host header
+I If you are also able to supply a non-numeric port, you can leave the domain name untouched to ensure that you reach the target application, while potentially injecting a payload via the port.
+GET /example HTTP/1.1
+Host: vulnerable-website.com:bad-stuff-here
+
+II  Alternatively, you could take advantage of a less-secure subdomain that you have already compromised:
+GET /example HTTP/1.1
+Host: hacked-subdomain.vulnerable-website.com
+
+III Other sites will try to apply matching logic to allow for arbitrary subdomains. In this case, you may be able to bypass the validation entirely by registering an arbitrary domain name that ends with the same sequence of characters as a whitelisted one:
+GET /example HTTP/1.1
+Host: notvulnerable-website.com   ----------> suppose we want to go to vulnerable-webiste.com but as we are not authenticated it does not allow us to access 
+  but we can creare a subdomain and access the website using above flawed validation
