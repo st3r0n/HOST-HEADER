@@ -2,4 +2,38 @@ mandatory in HTTP/1.1
 can be used to acces virtually hosted server on same Servver
 also when aload balancer is used HOST header is required to route traffic to specicifed host                                             #X-Forwarded-Host
 +++++++++++++++++++++++++HOST HEADER ATTACKS++++++++++++++++++++++++++++++++++++++++++++
-1.HOst header injection
+1.HOst header injection  --> SQLI , auth bypass
+
+2.web cache poisoning can be done if our host header is reflected in the responce
+
+3.host header auth bypass:
+sometimes if you just change the single host header it will work so we can se localhost in host header to access admin functionality like:
+GET /admin/delete?username=carlos HTTP/2
+Host: localhost   --------> it will work
+
+4.accesing internal network (uISNG SSRF through host header)
+we can use intruder to internal network bruteforcing in irder to access functionality available only to locaaalnetwork
+CAuTION*******   ---> remember to  Deselect Update Host header to match target in intruder when bruteforcing host header
+
+5. SSRF via flawed reuest parsing :
+suppose there is no fall back address but we can provide absolute URL to GET method so we can use this technique to perform SSRF 
+and access restricted functionality from host header do no update HOST header tp match target
+
+6. SSRF via a malformed request line
+Custom proxies sometimes fail to validate the request line properly, which can allow you to supply unusual, malformed input with unfortunate results.
+For example, a reverse proxy might take the path from the request line, prefix it with http://backend-server, and route the request to that upstream URL.
+This works fine if the path starts with a / character, but what if starts with an @ character instead?
+GET @private-intranet/example HTTP/1.1
+The resulting upstream URL will be http://backend-server@private-intranet/example,
+which most HTTP libraries interpret as a request to access private-intranet with the username backend-server.
+
+7.connection state attack:
+in this type of attack we can make use of two request which can be grouped together and sent as sequence to access restricted functionality or to conduct SSRF
+this can include 
+1. add two requests to a group
+2.change the hostheader in second to internal ip 
+3. the first request should contain base path / and original host header with corersct name
+4.use drop down menu next to send and send as a group 
+5 change connection to keep-alive
+6 now send and copy relevant data like cookie usernmae csrf token 
+7 send the request you want
