@@ -1,3 +1,6 @@
+
++++++++++++++++++ALWAYS SEE IF VALUE OF HOST HEADER IS REFLECTED SOMEWHERE IF IT DOES IT CAN OPEN VARIOUS ATTACK VECTORS++++++
+
 mandatory in HTTP/1.1
 can be used to acces virtually hosted server on same Servver
 also when aload balancer is used HOST header is required to route traffic to specicifed host                                             #X-Forwarded-Host
